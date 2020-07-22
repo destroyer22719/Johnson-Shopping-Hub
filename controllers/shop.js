@@ -93,7 +93,9 @@ exports.getCart = (req, res, next) => {
     .populate('cart.items.productId')
     .execPopulate()
     .then(user => {
+      
       const products = user.cart.items;
+      console.log(products)
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
@@ -101,9 +103,10 @@ exports.getCart = (req, res, next) => {
       });
     })
     .catch(err => {
-      const error = new Error(err);
-      error.httpStatusCode = 500
-      return next(error)
+      console.log(err)
+      // const error = new Error(err);
+      // error.httpStatusCode = 500
+      // return next(error)
     })};
 
 exports.postCart = (req, res, next) => {
