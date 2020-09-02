@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { validationResult } = require('express-validator/check');
 const fileHelper = require('../util/file')
 const Product = require('../models/product');
-
+const User = require('../models/user')
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
@@ -15,11 +15,14 @@ exports.getAddProduct = (req, res, next) => {
   });
 };
 
-exports.postAddProduct = (req, res, next) => {
+exports.postAddProduct = async (req, res, next) => {
+
   const title = req.body.title;
   const image = req.file;
   const price = req.body.price;
   const description = req.body.description;
+  const {username} = await User.findById(req.user);
+
   const errors = validationResult(req);
   if (!image){
     return res.status(422).render('admin/edit-product', {
@@ -58,6 +61,7 @@ exports.postAddProduct = (req, res, next) => {
 
   const product = new Product({
     title: title,
+    seller:username,
     price: price,
     description: description,
     imageUrl: imageUrl,

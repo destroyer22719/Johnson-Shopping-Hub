@@ -3,16 +3,99 @@
 
     <body>
         <%- include('../includes/navigation.ejs') %>
-        <main class="centered">
-            <h1><%= product.title %></h1>
-            <hr>
-            <div class="image">
-                <img src="/<%= product.imageUrl %>" alt="<%= product.title %>">
-            </div>
-            <h2><%= product.price %></h2>
-            <p><%= product.description %></p>
-            <% if (isAuthenticated) { %>
-                <%- include('../includes/add-to-cart.ejs', {product: product}) %>
-            <% } %>
+        <main class="centered ">
+                <h1><%= product.title %></h1>
+                <div class="image">
+                    <img src="/<%= product.imageUrl %>" alt="<%= product.title %>">
+                </div>
+                <h2><%= product.price %></h2>
+                <h3>Seller: <%=product.seller%></h3>
+                <p><%= product.description %></p>
+                <% if (isAuthenticated) { %>
+                    <%- include('../includes/add-to-cart.ejs', {product: product}) %>
+                <% } %>
+                <div class="btn" id="addReview">
+                    Add Review      
+                </div>
+                <hr>
+                <h3 style="display:inline">Rating:<span id="averageRating"></span> /10 |</h3>
+                <h3 style="display:inline">Reviews: <%=product.reviews.length %></h3>
+                <div id="reviewInputs" hidden="<%=showForm%>" style="margin-top: 10px;">
+                    <form class="form-control" action="/submitreview" method="POST">
+                        <% if (errorMessage) { %>
+                            <div class="user-message user-message--error"><%= errorMessage %></div>
+                        <% } %>
+                        <label for="rating">Rating (out of ten):</label><br>
+                        <input 
+                        class="<%= validationErrors.find(e => e.param === 'rating') ? 'invalid' : '' %>"
+                        style="width:300px;height:30px;font-size: 25px;"
+                        name="rating" 
+                        id="rating"
+                        type="number"><br>
+                        <label for="title">Title:</label><br>
+                        <input style="width:300px;height:30px;font-size: 25px;"type="text" name="title" id="title"><br>
+                        <label for="review">Review:</label><br>
+                        <textarea style="width:300px;height:150px;font-size: 25px;" type="text" name="review" id="review"></textarea><br>
+                        <input type="hidden" name="prodId" value="<%=prodId%>">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <input type="hidden" name="productTitle" value="<%= product.title %>">
+                        <button class="btn"type="submit">Submit Review</button>
+                    </form>
+                </div>
         </main>
+        <section>
+        <hr>
+        <% if (product.reviews.length > 0) {%>
+            
+            <h2>Reviews:</h2>
+            <div id="review-list">
+                <% for(let review of product.reviews){%>
+                    <article class="product-review">
+                        <h3><%=review.title%></h3>
+                        <h4>Rating:<%=review.rating%>/10</h4>
+                        <p>by: <b><%=review.userName%></b></p><br>
+                        <p><%=review.review%></p>
+                    </article>
+                <%}%>
+            </div>
+            <%} else {%>
+            <h3 style="text-align: center;">There are no reviews yet be the first one to leave a review!</h3>
+                <%}%>
+        </section>
+
+        <script>
+            const parsed_data = <%- JSON.stringify(product.reviews) %>  
+            const ratingsList = []
+            let totalRatings = 0
+
+
+            parsed_data.forEach(review => {
+                ratingsList.push(review.rating)
+            })
+
+            for(let i = 0; i < ratingsList.length; i++){
+                totalRatings += ratingsList[i]
+            }
+
+            let averageRating = totalRatings / ratingsList.length
+            let finalRating = Math.round(averageRating)
+            if(isNaN(finalRating)){
+                document.getElementById("averageRating").innerText = ""
+            } else {
+                document.getElementById("averageRating").innerText = finalRating
+            }
+
+            const addReview = document.getElementById("addReview")
+            const reviewInputs = document.getElementById("reviewInputs")
+            addReview.addEventListener("click", ()=>{
+                if (reviewInputs.hidden){
+                    reviewInputs.hidden = false;
+                    addReview.innerText = "Cancel Review"   
+                } else {
+                    reviewInputs.hidden = true;
+                    addReview.innerText = "Add Review"   
+                }
+
+            })
+        </script>
         <%- include('../includes/end.ejs') %>

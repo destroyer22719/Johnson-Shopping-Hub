@@ -12,7 +12,7 @@ const errorController = require('./controllers/error');
 const User = require('./models/user');
 
 const MONGODB_URI =
-'mongodb://127.0.0.1:27017/shop';
+'mongodb+srv://Nathan:8KtHwefldgfbstM2@cluster0.umvyt.mongodb.net/shop';
 
 const app = express();
 const store = new MongoDBStore({
@@ -98,18 +98,18 @@ app.use(authRoutes);
 app.get('/500', errorController.get500);
 
 app.use(errorController.get404);
-app.use((error, req, res, next) => {
-  // res.redirect('/500')
-  res.status(500).render('500',{
-    pageTitle: 'Error!',
-    path:'/500',
-    isAuthenticated: req.session.isLoggedIn
-  })
-})
+// app.use((error, req, res, next) => {
+//   // res.redirect('/500')
+//   res.status(500).render('500',{
+//     pageTitle: 'Error!',
+//     path:'/500',
+//     isAuthenticated: req.session.isLoggedIn
+//   })
+// })
 mongoose
   .connect(MONGODB_URI)
   .then(result => {
-    app.listen(3000);
+    app.listen(4000);
   })
   .catch(err => {
     console.log(err);

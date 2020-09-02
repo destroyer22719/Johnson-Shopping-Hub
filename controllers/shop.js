@@ -2,8 +2,12 @@ const Product = require('../models/product');
 const Order = require('../models/order');
 const fs = require('fs');
 const path = require('path')
-const PDFDocument = require('pdfkit')
-const itemPerPage = 1;
+const PDFDocument = require('pdfkit');
+const user = require('../models/user');
+const product = require('../models/product');
+const itemPerPage = 3;
+const { validationResult } = require('express-validator/check');
+
 exports.getProducts = (req, res, next) => {
   const page = +req.query.page || 1;
   let totalItems;
@@ -39,13 +43,23 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getProduct = (req, res, next) => {
+  let message = req.flash('error');
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
   const prodId = req.params.productId;
   Product.findById(prodId)
     .then(product => {
       res.render('shop/product-detail', {
         product: product,
         pageTitle: product.title,
-        path: '/products'
+        errorMessage:message,
+        showForm:false,
+        path: '/products',
+        prodId:prodId,
+        validationErrors:[]
       });
     })
     .catch(err => {
@@ -53,6 +67,42 @@ exports.getProduct = (req, res, next) => {
       error.httpStatusCode = 500
       return next(error)
     })};
+exports.postReview = (req, res, next) => {
+  const rating = req.body.rating;
+  const title = req.body.title;
+  const review = req.body.review;
+  const prodId = req.body.prodId;
+  const prodTitle = req.body.productTitle
+  const errors = validationResult(req);
+
+  const finalReview = {
+    userName:req.user.username,
+    userId:req.user._id,
+    rating:rating,
+    title:title,
+    review:review
+  }
+    Product.findOne({title: prodTitle },(err, result) => {
+    if (err) return next(err);
+    const errors = validationResult(req);
+    console.log(errors.array())
+    if(!errors.isEmpty()){
+      return res.status(422)
+      .render('shop/product-detail', {
+        product: result,
+        pageTitle: result.title,
+        path: '/products',
+        prodId:prodId,
+        showForm:true,
+        errorMessage: errors.array()[0].msg,
+        validationErrors: errors.array()
+      });
+    }
+    result.reviews.push(finalReview);
+    result.save()
+    return res.redirect('/product/'+prodId)
+    })
+  }
 
 exports.getIndex = (req, res, next) => {
   const page = +req.query.page || 1;
@@ -68,7 +118,7 @@ exports.getIndex = (req, res, next) => {
     .skip((page-1) * itemPerPage)
     .limit(itemPerPage)
   })
-    .then(products => {
+    .then( products => {
       res.render('shop/index', {
         prods: products,
         pageTitle: 'Shop',
@@ -82,6 +132,7 @@ exports.getIndex = (req, res, next) => {
       });
     })
     .catch(err => {
+      console.log(err)
       const error = new Error(err);
       error.httpStatusCode = 500
       return next(error)

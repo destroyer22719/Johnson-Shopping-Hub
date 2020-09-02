@@ -1,3 +1,5 @@
+const { check, body } = require('express-validator/check');
+
 const path = require('path');
 
 const express = require('express');
@@ -12,6 +14,13 @@ router.get('/', shopController.getIndex);
 router.get('/products', shopController.getProducts);
 
 router.get('/products/:productId', shopController.getProduct);
+
+router.post('/submitreview', [
+    body(
+        'rating',
+        'Please enter a  with only numbers and text and at least 5 characters.'
+      ).isFloat({lt:11})
+], shopController.postReview)
 
 router.get('/cart', isAuth, shopController.getCart);
 

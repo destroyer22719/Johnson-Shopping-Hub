@@ -23,3 +23,15 @@
   margin: 0;
 }
 
+.increase{
+  display: inline;
+  font-size: 30px;
+  margin:0px;
+}
+.decrease{
+  display: inline;
+  font-size: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin:0px;
+}
