@@ -12,8 +12,7 @@ const errorController = require('./controllers/error');
 const User = require('./models/user');
 
 const MONGODB_URI =
-'mongodb+srv://Nathan:8KtHwefldgfbstM2@cluster0.umvyt.mongodb.net/shop';
-
+`${process.env.MONGO_URL}`;
 const app = express();
 const store = new MongoDBStore({
   uri: MONGODB_URI,
@@ -109,7 +108,7 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGODB_URI)
   .then(result => {
-    app.listen(3000);
+    app.listen(process.env.PORT || 3000);
   })
   .catch(err => {
     console.log(err);
