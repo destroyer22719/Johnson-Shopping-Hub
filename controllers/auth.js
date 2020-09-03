@@ -119,6 +119,7 @@ exports.postLogin = (req, res, next) => {
 
 exports.postSignup = (req, res, next) => {
   const email = req.body.email;
+  const username = req.body.username;
   const password = req.body.password;
 
   const errors = validationResult(req);
@@ -129,6 +130,7 @@ exports.postSignup = (req, res, next) => {
       pageTitle: 'Signup',
       errorMessage: errors.array()[0].msg,
       oldInput: {
+        username:username,
         email: email,
         password: password,
         confirmPassword: req.body.confirmPassword
@@ -142,6 +144,7 @@ exports.postSignup = (req, res, next) => {
     .then(hashedPassword => {
       const user = new User({
         email: email,
+        username: username,
         password: hashedPassword,
         cart: { items: [] }
       });
@@ -157,6 +160,7 @@ exports.postSignup = (req, res, next) => {
       // });
     })
     .catch(err => {
+      console.log(err)
       const error = new Error(err);
       error.httpStatusCode = 500
       return next(error)

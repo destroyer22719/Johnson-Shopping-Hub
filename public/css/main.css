@@ -36,7 +36,17 @@ form {
 .centered {
   text-align: center;
 }
+.detail-flex{
+  display:flex;
+}
+.product-detail{
+  width:20%;
+}
+.product-review > *{
+  margin-top: 2px;
+  margin-bottom: 2px;
 
+}
 .image {
   height: 20rem;
 }
@@ -44,6 +54,7 @@ form {
 .image img {
   height: 100%;
 }
+
 
 .main-header {
   width: 100%;
@@ -274,4 +285,30 @@ form {
   .user-message {
     width: 30rem;
   }
+}
+.form-control {
+  margin: 1rem 0;
+}
+
+.form-control label,
+.form-control input,
+.form-control textarea {
+  margin-bottom: 0.25rem;
+}
+
+.form-control input,
+.form-control textarea {
+  border: 1px solid #a1a1a1;
+  font: inherit;
+  border-radius: 2px;
+}
+
+.form-control input:focus,
+.form-control textarea:focus {
+  outline-color: #00695c;
+}
+
+.form-control input.invalid,
+.form-control textarea.invalid {
+  border-color: red;
 }

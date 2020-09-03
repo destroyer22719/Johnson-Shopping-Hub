@@ -7,6 +7,9 @@ const productSchema = new Schema({
     type: String,
     required: true
   },
+  seller:{
+    type:String
+  },
   price: {
     type: Number,
     required: true
@@ -23,7 +26,14 @@ const productSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true
-  }
+  },
+  reviews:[{
+    userName:String,
+    userId:Schema.Types.ObjectId,
+    rating:Number,
+    title:String,
+    review:String
+  }]
 });
 
 module.exports = mongoose.model('Product', productSchema);
