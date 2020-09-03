@@ -169,7 +169,18 @@ exports.postCart = (req, res, next) => {
       res.redirect('/cart');
     });
 };
-
+exports.decreaseCart = (req, res, next) => {
+  const prodId = req.body.productId;
+  const cartId = req.body.cartId;
+  Product.findById(prodId)
+  .then(product => {
+    return req.user.decreaseCart(product)
+  })
+  .then(result => {
+    console.log(result)
+    res.redirect('/cart')
+  })
+}
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   req.user

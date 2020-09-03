@@ -12,7 +12,12 @@
                             <h1><%= p.productId.title %></h1>
                             <h2>Quantity: <span id="quantity"><%= p.quantity %></span></h2>
                             <div>
-                                <button class=" btn decrease">-</button>
+                                <form action="/decrease-cart" method="post">
+                                    <input type="hidden" name="cartId" value="<%=p._id%>">
+                                    <input type="hidden" name="productId" value="<%= p.productId._id %>">
+                                    <button type="submit"class=" btn decrease">-</button>
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                </form>
                                 <form action="/cart" method="post">
                                     <input type="hidden" name="productId" value="<%= p.productId._id %>">
                                     <button class="btn increase" type="submit">+</button>
