@@ -100,7 +100,7 @@ exports.postReview = (req, res, next) => {
     }
     result.reviews.push(finalReview);
     result.save()
-    return res.redirect('/product/'+prodId)
+    return res.redirect('/products/'+prodId)
     })
   }
 
